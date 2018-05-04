@@ -81,6 +81,32 @@
     return  output;
 }
 
+- (nullable NSString*)md5WithFilePath:(NSString*)path {
+    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+    if(!handle) return nil;
+    
+    CC_MD5_CTX md5;
+    CC_MD5_Init(&md5);
+    BOOL done = NO;
+    while(!done){
+        NSData* fileData = [handle readDataOfLength:256];
+        CC_MD5_Update(&md5, fileData.bytes,(CC_LONG)fileData.length);
+        if(fileData.length <= 0)  break;
+    }
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5_Final(digest, &md5);
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+        [output appendFormat:@"%02x", digest[i]];
+    return output;
+}
+
+- (BOOL)isLegalFileWithMd5:(NSString *)md5Value path:(NSString *)filePath {
+    NSString *md5 = [self md5WithFilePath:filePath];
+    return [md5Value isEqualToString:md5];
+}
+
+
 #pragma mark -- NSMutableAttributedString
 
 + (nonnull NSMutableAttributedString *)makeAttributedString:(nonnull NSString*)szOriginalString regionString:(nonnull NSString*)szRegionString regionStringColor:(nonnull UIColor*)color {
@@ -118,6 +144,14 @@
     NSPredicate  * predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     return [predicate evaluateWithObject:numberStr];
 }
+
++ (BOOL)checkIPv4Address:(nonnull NSString *)ipv4 {
+    if (ipv4.length <= 0)  return NO;
+    NSString * regex = @"^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
+    NSPredicate  * predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+    return [predicate evaluateWithObject:ipv4];
+}
+
 
 + (BOOL)checkVerifyCode:(nonnull NSString *)code withBits:(NSUInteger)bits {
     if (code.length <= 0) return NO;
@@ -368,30 +402,6 @@
     CGFloat d = (A * point.x + B * point.y + C) / sqrt(A * A + B * B);
     return fabs(d);
 }
-
-+ (void)douglasPeukcerCompress:(NSArray<OUPoint *>*)points destPoints:(NSMutableArray<OUPoint *> *)destArray startIndex:(int)start endIndex:(int)end maxDistance:(CGFloat)threshold {
-    if (start >= end) return;
-    CGFloat maxDist = 0.f;
-    int currentIndex = 0;
-    for (int i = start + 1; i < end; i++) {
-        CGFloat distance = [self calculateTheVerticalDistanceFromPointToLineStart:points[start].cgPoint endPoint:points[end].cgPoint point:points[i].cgPoint];
-        if (distance > maxDist) {
-            maxDist = distance;
-            currentIndex = i;
-        }
-    }
-    
-    if (maxDist >= threshold) {
-        [destArray addObject:points[currentIndex]];
-        
-        NSArray<OUPoint *> *head = [points subarrayWithRange:(NSRange){0, currentIndex + 1}];
-        NSArray<OUPoint *> *tail = [points subarrayWithRange:(NSRange){currentIndex + 1, points.count - currentIndex - 1}];
-        
-        [self douglasPeukcerCompress:head destPoints:destArray startIndex:0 endIndex:head.count - 1 maxDistance:threshold];
-        [self douglasPeukcerCompress:tail destPoints:destArray startIndex:0 endIndex:tail.count - 1 maxDistance:threshold];
-    }
-}
-
 
 + (NSArray<NSValue *> *)douglasPeucker:(NSArray<NSValue *> *)points epsilon:(float)epsilon {
     NSUInteger count = [points count];

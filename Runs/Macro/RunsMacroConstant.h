@@ -9,6 +9,8 @@
 #ifndef RunsMacroConstant_h
 #define RunsMacroConstant_h
 
+#define NON_STRING @""
+
 #define CER_NAME @"bomb"
 #define CER_TYPE @"cer"
 
@@ -26,8 +28,10 @@
 
 #ifdef DEBUG
 #define RUNS_TEST (1)
+#define LOG_HEART_BEAT (0)
 #else
 #define RUNS_TEST (0)
+#define LOG_HEART_BEAT (0)
 #endif
 
 
@@ -54,14 +58,13 @@
 
 //色值处理转换
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define UIColorFromRGBA(rgbValue, a) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:a]
 
 //用于block的弱引用
 #define WEAK_SELF_OBJCET_BLOCK(selfObject, weakObject) __weak __typeof(selfObject)weakObject = selfObject;
 #define WEAK_OBJCET_STRONG_POINT(weakSelf, strongSelf) __strong __typeof(weakSelf)strongSelf = weakSelf;
 #define WEAK_BLOCK_OBJECT(object) WEAK_SELF_OBJCET_BLOCK(object,weak_##object##_kaf9097uq54ni8);
 #define BLOCK_OBJECT(object) WEAK_OBJCET_STRONG_POINT(weak_##object##_kaf9097uq54ni8,weak_##object);
-
-
 
 #define RandomColor [UIColor colorWithRed:arc4random_uniform(255)/255.0 green:arc4random_uniform(255)/255.0 blue:arc4random_uniform(255)/255.0 alpha:1]
 #define RandomData [NSString stringWithFormat:@"随机数据---%d", arc4random_uniform(1000000)]
@@ -76,26 +79,35 @@
 #define STATUS_AND_NAVIGATION_PROXY_HEIGHT ((STATUS_BAR_HEIGHT) + (NAVIGATION_BAR_PROXY_HEIGHT))
 
 //屏幕 rect
-#define SCREEN_RECT ([UIScreen mainScreen].bounds)
-#define OC_SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
-#define OC_SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+#define SCREEN_RECT (UIScreen.mainScreen.bounds)
+#define OC_SCREEN_WIDTH (UIScreen.mainScreen.bounds.size.width)
+#define OC_SCREEN_HEIGHT (UIScreen.mainScreen.bounds.size.height)
+#define OC_SCREEN_MAX_LENGTH (MAX(OC_SCREEN_WIDTH, OC_SCREEN_HEIGHT))
+#define OC_SCREEN_MIN_LENGTH (MIN(OC_SCREEN_WIDTH, OC_SCREEN_HEIGHT))
+#define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define IS_RETINA ([UIScreen.mainScreen scale] >= 2.0)
+
+#define IS_IPHONE_4_OR_LESS (IS_IPHONE && OC_SCREEN_MAX_LENGTH < 568.0)
+#define IS_IPHONE_5 (IS_IPHONE && OC_SCREEN_MAX_LENGTH == 568.0)
+#define IS_IPHONE_678 (IS_IPHONE && OC_SCREEN_MAX_LENGTH == 667.0)
+#define IS_IPHONE_678P (IS_IPHONE && OC_SCREEN_MAX_LENGTH == 736.0)
+#define IS_IPHONE_X (IS_IPHONE && OC_SCREEN_MAX_LENGTH == 812.0)
+#define IPHONE_X_MARGIN (IS_IPHONE_X ? 72.f : 0.f)
 
 
 #if defined(DEBUG)
-//#define RunsLog(STRLOG) NSLog(@"%@: %@ %@", self, NSStringFromSelector(_cmd), STRLOG)
 #define RunsLog(format, ...) NSLog(@"[%d], %@: %@ %@", NSThread.isMainThread, self, NSStringFromSelector(_cmd), ([NSString stringWithFormat:format, ## __VA_ARGS__]));
 #else
-#define RunsLog(format, ...);//NSLog(@"%@: %@ %@", self, NSStringFromSelector(_cmd), STRLOG)
+#define RunsLog(format, ...);
+#endif
 
-//#if TARGET_IPHONE_SIMULATOR
-//// 模拟器中仍然显示日志
-//#define RunsLog(STRLOG)
-////#define RunsLogSP(format, ...)
-//#else
-//// release版本目前也增加日志吧,正式发部时再决定是否去掉
-//#define RunsLog(STRLOG)
-//#define RunsLog(format, ...)
-//#endif
+#ifndef RunsStackLog
+#ifdef DEBUG
+#define RunsStackLog(deep)   NSLog(@"函数调用栈 : %@",[NSThread.callStackSymbols subarrayWithRange:(NSRange){0,deep}]);
+#else
+#define RunsStackLog(deep)
+#endif
 #endif
 
 #ifndef RunsLogEX
@@ -117,7 +129,6 @@
 #endif
 
 #if defined(ENTERPRISE_VERSION)
-//#define RunsLog(STRLOG) NSLog(@"%@: %@ %@", self, NSStringFromSelector(_cmd), STRLOG)
 #define RunsLog(format, ...) NSLog(@"%@: %@ %@", self, NSStringFromSelector(_cmd), ([NSString stringWithFormat:format, ## __VA_ARGS__]));
 #define RunsLogEX(format, ...) NSLog(format, ## __VA_ARGS__);
 #endif
@@ -128,7 +139,6 @@
 RunsLog(@"RunsAssert: %@ [%@ %@]",msg,@(__FILE__),@(__LINE__)); \
 assert(false); \
 }
-//NSString* targetMsg = [NSString stringWithFormat:@"RunsAssert: %@ [%@ %@]",msg,@(__FILE__),@(__LINE__)]; \
 
 #define RunsAssertKind(_obj,_kind,_msg) if (_obj) { \
 RunsAssert([(_obj) isKindOfClass:[_kind class]],(_msg)); \
@@ -138,9 +148,7 @@ RunsLog(@"RunsAssertKind: warning %@ is nil.[%@ %@]",NSStringFromClass([_kind cl
 #else
 #define RunsAssert(condition,msg) if (!(condition)) { \
 RunsLog(@"RunsAssert: %@ [%@ %@]",msg,@(__FILE__),@(__LINE__)); \
-return;\
 }
-//NSString* targetMsg = [NSString stringWithFormat:@"RunsAssert: %@ [%@ %@]",msg,@(__FILE__),@(__LINE__)]; \
 
 #define RunsAssertKind(_obj,_kind,_msg) if (_obj) { \
 RunsAssert([(_obj) isKindOfClass:[_kind class]],(_msg)); \
@@ -148,7 +156,6 @@ RunsAssert([(_obj) isKindOfClass:[_kind class]],(_msg)); \
 RunsLog(@"RunsAssertKind: warning %@ is nil.[%@ %@]",NSStringFromClass([_kind class]),@(__FILE__),@(__LINE__)); \
 }
 #endif
-//
 
 #define SafeSetObject(map,obj,key) if(map){\
 if(key) {\
@@ -179,14 +186,13 @@ dispatch_async(dispatch_get_main_queue(), block);\
 }
 
 #define UNAVAILABLE(args) \
-- (instancetype) init __attribute__((unavailable(args)));\
-+ (instancetype) new  __attribute__((unavailable(args)));
+- (instancetype)init __attribute__((unavailable(args)));\
++ (instancetype)new  __attribute__((unavailable(args)));
 
 #define SINGLETON_UNAVAILABLE_FUNCTION \
-- (instancetype) init __attribute__((unavailable("init not available, call sharedInstance instead")));\
-+ (instancetype) new  __attribute__((unavailable("new not available, call sharedInstance instead")));
+- (instancetype)init __attribute__((unavailable("init not available, call sharedInstance instead")));\
++ (instancetype)new  __attribute__((unavailable("new not available, call sharedInstance instead")));
 
-//+ (instancetype) alloc __attribute__((unavailable("alloc not available, call sharedInstance instead")));
 #ifdef DEBUG
 #define RunsRequestLog(args0,arg1)\
 if (![args0 containsString:kUploadPhotoURL]\

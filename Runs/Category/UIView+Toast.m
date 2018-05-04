@@ -66,7 +66,6 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     [self makeToast:message duration:[CSToastManager defaultDuration] position:[CSToastManager defaultPosition] style:nil];
 }
 
-
 - (void)makeToast:(NSString *)message duration:(NSTimeInterval)duration position:(id)position {
     [self makeToast:message duration:duration position:position style:nil];
 }
@@ -103,7 +102,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     // store the completion block on the toast view
     objc_setAssociatedObject(toast, &CSToastCompletionKey, completion, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    if ([CSToastManager isQueueEnabled] && objc_getAssociatedObject(self, &CSToastActiveToastViewKey) != nil) {
+    if ([CSToastManager isQueueEnabled] && [self.cs_activeToasts count] > 0) {
         // we're about to queue this toast view so we need to store the duration and position as well
         objc_setAssociatedObject(toast, &CSToastDurationKey, @(duration), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         objc_setAssociatedObject(toast, &CSToastPositionKey, position, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -114,6 +113,24 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         // present
         [self cs_showToast:toast duration:duration position:position];
     }
+}
+
+#pragma mark - Hide Toast Method
+
+- (void)hideToasts {
+    for (UIView *toast in [self cs_activeToasts]) {
+        [self hideToast:toast];
+    }
+}
+
+- (void)hideToast:(UIView *)toast {
+    // sanity
+    if (!toast || ![[self cs_activeToasts] containsObject:toast]) return;
+    
+    NSTimer *timer = (NSTimer *)objc_getAssociatedObject(toast, &CSToastTimerKey);
+    [timer invalidate];
+    
+    [self cs_hideToast:toast];
 }
 
 #pragma mark - Private Show/Hide Methods
@@ -129,13 +146,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         toast.exclusiveTouch = YES;
     }
     
-    UIView *lastToast = objc_getAssociatedObject(self, &CSToastActiveToastViewKey);
-    [UIView animateWithDuration:0.5 animations:^{
-        lastToast.alpha = 0.f;
-    }];
-    
-    // set the active toast
-    objc_setAssociatedObject(self, &CSToastActiveToastViewKey, toast, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [[self cs_activeToasts] addObject:toast];
     
     [self addSubview:toast];
     
@@ -164,8 +175,8 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
                      } completion:^(BOOL finished) {
                          [toast removeFromSuperview];
                          
-                         // clear the active toast
-                         objc_setAssociatedObject(self, &CSToastActiveToastViewKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                         // remove
+                         [[self cs_activeToasts] removeObject:toast];
                          
                          // execute the completion block, if necessary
                          void (^completion)(BOOL didTap) = objc_getAssociatedObject(toast, &CSToastCompletionKey);
@@ -194,7 +205,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     
     // default to the shared style
     if (style == nil) {
-        style = [CSToastManager sharedStyle];
+        style = [CSToastStyle.alloc initWithDefaultStyle];//[CSToastManager sharedStyle];
     }
     
     // dynamically build a toast view with any combination of message, title, & image
@@ -311,7 +322,16 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     return wrapperView;
 }
 
-#pragma mark - Queue
+#pragma mark - Storage
+
+- (NSMutableArray *)cs_activeToasts {
+    NSMutableArray *cs_activeToasts = objc_getAssociatedObject(self, &CSToastActiveKey);
+    if (cs_activeToasts == nil) {
+        cs_activeToasts = [[NSMutableArray alloc] init];
+        objc_setAssociatedObject(self, &CSToastActiveKey, cs_activeToasts, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return cs_activeToasts;
+}
 
 - (NSMutableArray *)cs_toastQueue {
     NSMutableArray *cs_toastQueue = objc_getAssociatedObject(self, &CSToastQueueKey);
@@ -351,6 +371,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     activityView.alpha = 0.0;
     activityView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
     activityView.layer.cornerRadius = style.cornerRadius;
+    activityView.layer.masksToBounds = YES;
     
     if (style.displayShadow) {
         activityView.layer.shadowColor = style.shadowColor.CGColor;
@@ -359,8 +380,20 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         activityView.layer.shadowOffset = style.shadowOffset;
     }
     
+    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    effectView.frame = activityView.bounds;
+    [activityView addSubview:effectView];
+    
+//    //毛玻璃
+//    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:activityView.bounds];
+//    toolbar.alpha = 0.97;
+//    [activityView addSubview:toolbar];
+
+
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.center = CGPointMake(activityView.bounds.size.width / 2, activityView.bounds.size.height / 2);
+    activityIndicatorView.color = style.activityColor;
     [activityView addSubview:activityIndicatorView];
     [activityIndicatorView startAnimating];
     
@@ -404,6 +437,12 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     backView.backgroundColor = style.backgroundColor;
     backView.layer.cornerRadius = style.cornerRadius;
     
+//    //毛玻璃
+//    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:backView.bounds];
+//    toolbar.alpha = 0.97;
+//    [backView addSubview:toolbar];
+
+    
     CGFloat width = textView.frame.size.width * 2.0f;
     CGFloat height = textView.frame.size.width * 0.75f;
     backView.frame = CGRectMake(backView.frame.origin.x, backView.frame.origin.y, width, height);
@@ -413,6 +452,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.center = CGPointMake(backView.bounds.size.width * 0.25f, backView.bounds.size.height * 0.5f);
+    activityIndicatorView.color = style.activityColor;
     [backView addSubview:activityIndicatorView];
     [activityIndicatorView startAnimating];
     [self addSubview:backView];
@@ -455,8 +495,15 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
     backView.frame = CGRectMake(0, 0, width, height);
     backView.center = CGPointMake(self.frame.size.width*0.5f, self.frame.size.height*0.5f);
     
+//    //毛玻璃
+//    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:backView.bounds];
+//    toolbar.alpha = 0.97;
+//    [backView addSubview:toolbar];
+
+    
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.center = CGPointMake(backView.bounds.size.width * 0.5f, backView.bounds.size.height * 0.4f);
+    activityIndicatorView.color = style.activityColor;
     [backView addSubview:activityIndicatorView];
     [activityIndicatorView startAnimating];
 
@@ -476,7 +523,7 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         CGSize expectedSizeTitle = [titleLabel sizeThatFits:maxSizeTitle];
         expectedSizeTitle = CGSizeMake(MIN(maxSizeTitle.width, expectedSizeTitle.width), MIN(maxSizeTitle.height, expectedSizeTitle.height));
         titleLabel.frame = CGRectMake(0.0, height - expectedSizeTitle.height, backView.frame.size.width, expectedSizeTitle.height);
-        titleLabel.center = CGPointMake(backView.frame.size.width * 0.5f, height - (expectedSizeTitle.height * 0.8f));
+        titleLabel.center = CGPointMake(backView.frame.size.width * 0.5f, height - (expectedSizeTitle.height * 1.f));
         [backView addSubview:titleLabel];
     }
     [self addSubview:backView];
@@ -620,8 +667,8 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         self.messageColor = [UIColor whiteColor];
         self.maxWidthPercentage = 0.8;
         self.maxHeightPercentage = 0.8;
-        self.horizontalPadding = 10.0;
-        self.verticalPadding = 10.0;
+        self.horizontalPadding = 20.0;
+        self.verticalPadding = 15.0;
         self.cornerRadius = 10.0;
         self.titleFont = [UIFont boldSystemFontOfSize:16.0];
         self.messageFont = [UIFont systemFontOfSize:16.0];
@@ -631,10 +678,11 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         self.messageNumberOfLines = 0;
         self.displayShadow = NO;
         self.shadowOpacity = 0.8;
-        self.shadowRadius = 6.0;
+        self.shadowRadius = 2.0;
         self.shadowOffset = CGSizeMake(4.0, 4.0);
         self.imageSize = CGSizeMake(80.0, 80.0);
         self.activitySize = CGSizeMake(100.0, 100.0);
+        self.activityColor = [UIColor whiteColor];
         self.fadeDuration = 0.2;
     }
     return self;
@@ -684,8 +732,8 @@ static const NSString * CSToastCompletionKey        = @"CSToastCompletionKey";
         self.sharedStyle = [[CSToastStyle alloc] initWithDefaultStyle];
         self.tapToDismissEnabled = YES;
         self.queueEnabled = YES;
-        self.defaultDuration = 0.5;
-        self.defaultPosition = CSToastPositionCenter;
+        self.defaultDuration = 3.0;
+        self.defaultPosition = CSToastPositionBottom;
     }
     return self;
 }

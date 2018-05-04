@@ -185,19 +185,19 @@
     // Check pre-conditions.
     if (self.size.width < 1 || self.size.height < 1) {
         
-        NSLog (@"*** error: invalid size: (%.2f x %.2f). Both dimensions must be >= 1: %@", self.size.width, self.size.height, self);
+        RunsLogEX (@"*** error: invalid size: (%.2f x %.2f). Both dimensions must be >= 1: %@", self.size.width, self.size.height, self);
         return nil;
     }
     
     if (!self.CGImage) {
         
-        NSLog (@"*** error: image must be backed by a CGImage: %@", self);
+        RunsLogEX (@"*** error: image must be backed by a CGImage: %@", self);
         return nil;
     }
     
     if (maskImage && !maskImage.CGImage) {
         
-        NSLog (@"*** error: maskImage must be backed by a CGImage: %@", maskImage);
+        RunsLogEX (@"*** error: maskImage must be backed by a CGImage: %@", maskImage);
         return nil;
     }
 

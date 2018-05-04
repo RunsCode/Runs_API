@@ -20,4 +20,14 @@
     return CGRectContainsPoint(btnBounds, point);
 }
 
+- (void)sendActionsForControlEvents:(UIControlEvents)controlEvents {
+    RunsLog(@"sendActionsForControlEvents");
+    [super sendActionsForControlEvents:controlEvents];
+}
+
+- (void)sendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
+    RunsLog(@"sendAction:(SEL)action");
+    [super sendAction:action to:target forEvent:event];
+}
+
 @end

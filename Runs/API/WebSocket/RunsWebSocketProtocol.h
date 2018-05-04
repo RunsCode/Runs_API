@@ -22,6 +22,7 @@ typedef void(^SocketCallback)(NSDictionary *messsage);
 - (void)connectWithURL:(NSURL *)URL;
 - (void)reconnect;
 - (void)closeWithManually:(BOOL)isManually;
+- (void)forcedReconnect;
 //
 - (void)sendMap:(NSDictionary *)parameters;
 - (void)sendJson:(NSString *)message;

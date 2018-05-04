@@ -188,6 +188,24 @@ typedef void (^_FDViewControllerWillAppearInjectBlock)(UIViewController *viewCon
     objc_setAssociatedObject(self, key, @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+- (void)fd_popTargetViewController:(Class)targetCls animated:(BOOL)animated completed:(void(^ _Nullable)(void))completed {
+    __block UIViewController *target = nil;
+    [self.viewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:targetCls]) {
+            target = obj;
+            *stop = YES;
+        }
+    }];
+    if (target) {
+        [self popToViewController:target animated:animated];
+    } else {
+        [self popViewControllerAnimated:animated];
+    }
+    if (completed) {
+        completed();
+    }
+}
+
 @end
 
 @implementation UIViewController (FDFullscreenPopGesture)

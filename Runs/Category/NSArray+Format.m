@@ -21,7 +21,10 @@
         string = [NSString stringWithFormat:@"%@ \n %@", string, map];
     }
     return string;
+}
 
+- (BOOL)isEmpty {
+    return self.count <= 0;
 }
 
 @end

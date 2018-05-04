@@ -67,7 +67,7 @@ typedef void (^NetworkUnreachable)(Reachability * reachability);
 +(Reachability*)reachabilityWithHostName:(NSString*)hostname;
 +(Reachability*)reachabilityForInternetConnection;
 +(Reachability*)reachabilityWithAddress:(void *)hostAddress;
-+(Reachability*)reachabilityForLocalWiFi;
+//+(Reachability*)reachabilityForLocalWiFi;
 
 -(Reachability *)initWithReachabilityRef:(SCNetworkReachabilityRef)ref;
 

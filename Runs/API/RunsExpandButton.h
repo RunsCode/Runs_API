@@ -10,9 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+IB_DESIGNABLE
 @interface RunsExpandButton : UIButton
 //x,y轴向外扩张多少像素
-@property (nonatomic, assign) CGPoint expandPoint;
+@property (nonatomic, assign) IBInspectable CGPoint expandPoint;
 @end
 
 NS_ASSUME_NONNULL_END

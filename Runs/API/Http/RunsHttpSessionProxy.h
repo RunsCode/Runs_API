@@ -12,9 +12,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RunsHttpSessionProxy : NSObject <RunsHttpSessionProtocol>
-SINGLETON_UNAVAILABLE_FUNCTION
+//SINGLETON_UNAVAILABLE_FUNCTION
 
 + (instancetype )sharedInstance;
 @end
-
 NS_ASSUME_NONNULL_END

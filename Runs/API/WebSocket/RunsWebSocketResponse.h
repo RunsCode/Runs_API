@@ -1,5 +1,5 @@
 //
-//  RunsWebSocketRespone.h
+//  RunsWebSocketResponse.h
 //  OU_iPad
 //
 //  Created by runs on 2017/8/2.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "RunsWebSocketResponeProtocol.h"
 
-@interface RunsWebSocketRespone : NSObject<RunsWebSocketResponeProtocol>
+@interface RunsWebSocketResponse : NSObject<RunsWebSocketResponeProtocol>
 @property (nonatomic, strong) NSNumber *type;
 @property (nonatomic, copy) NSString *source;
 @property (nonatomic, copy) NSString *dest;

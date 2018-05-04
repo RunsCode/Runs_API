@@ -1,5 +1,5 @@
 //
-//  RunsHttpSessionRespone.h
+//  RunsHttpSessionResponse.h
 //  OU_iPad
 //
 //  Created by runs on 2017/8/1.
@@ -8,14 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@interface RunsHttpSessionRespone : NSObject
+@interface RunsHttpSessionResponse : NSObject
 @property (nonatomic, assign) BOOL success;
 @property (nonatomic, assign) NSInteger code;
-@property (nonatomic, strong) NSDictionary *data;
+@property (nonatomic, strong) id data;
 @property (nonatomic, strong) NSDictionary *origin;
 @property (nonatomic, copy) NSString *errorMessage;
 @property (nonatomic, copy) NSString *returnCode;
 
-- (instancetype)initWithResponeData:(id)respone;
+- (instancetype)initWithResponseData:(id)respone;
 - (NSError *)error;
 @end

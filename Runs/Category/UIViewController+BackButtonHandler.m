@@ -26,7 +26,23 @@
 #import "UIViewController+BackButtonHandler.h"
 
 @implementation UIViewController (BackButtonHandler)
-
+- (void)rs_replacePopAction:(SEL)sel {
+    UIImage *backButtonDefaultImage = [UIImage imageNamed:@"classroom_back_default.png"];
+    UIImage *backButtonDownImage = [UIImage imageNamed:@"classroom_back_down.png"];
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:backButtonDefaultImage forState:UIControlStateNormal];
+    [backBtn setImage:backButtonDownImage forState:UIControlStateHighlighted];
+    if (sel) {
+        [backBtn addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
+    }else{
+        [backBtn addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchDragInside];
+    }
+    backBtn.frame = CGRectMake(0, 0, 44, 44);
+    [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -34, 0, 0);
+    UIBarButtonItem *back = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
+    self.navigationItem.leftBarButtonItem = back;
+}
 @end
 
 @implementation UINavigationController (ShouldPopOnBackButton)

@@ -10,10 +10,11 @@
 
 @implementation UIAlertController (Category)
 
-+ (void)rs_showNormalAlertTitle:(NSString *)title massage:(NSString *)message buttonName:(NSString *)name {
++ (instancetype)rs_showNormalAlertTitle:(NSString *)title massage:(NSString *)message buttonName:(NSString *)name {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:nil]];
     [UIApplication.sharedApplication.keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+    return alert;
 }
 
 @end

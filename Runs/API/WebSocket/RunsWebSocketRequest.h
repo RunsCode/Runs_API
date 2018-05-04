@@ -19,10 +19,11 @@
  
  @param code 消息类型
  @param source 发送者uid
- @param dest 目的地 这里为roomId
+ @param roomId 目的地 这里为roomId
  @param data 参数
  @return 实例
  */
+
 + (instancetype)requestWithType:(NSInteger)code source:(NSString *)source dest:(NSString *)roomId data:(NSDictionary *)data;
 
 @end

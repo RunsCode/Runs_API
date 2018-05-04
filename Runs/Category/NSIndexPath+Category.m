@@ -8,7 +8,7 @@
 
 #import "NSIndexPath+Category.h"
 
-static const char NSIndexPathCategoryRowsCount = '\0\0';
+static const NSString * NSIndexPathCategoryRowsCount = @"NSIndexPath+Category_runs";
 
 @implementation NSIndexPath (Category)
 
@@ -18,7 +18,7 @@ static const char NSIndexPathCategoryRowsCount = '\0\0';
 
 - (NSUInteger)rowsCount {
     id value = objc_getAssociatedObject(self, &NSIndexPathCategoryRowsCount);
-    return value;
+    return (NSUInteger)value;
 }
 
 @end

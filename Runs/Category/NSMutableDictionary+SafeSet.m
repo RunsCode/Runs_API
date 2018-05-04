@@ -18,12 +18,20 @@
     [self rs_setObject:@(intValue) forKey:@(key)];
 }
 
+- (void)rs_setInt:(NSInteger)intValue forKey:(id<NSCopying>)key {
+    [self rs_setObject:@(intValue) forKey:key];
+}
+
 - (void)rs_setFloat:(CGFloat)floatValue forInt:(NSInteger)key {
     [self rs_setObject:@(floatValue) forKey:@(key)];
 }
 
 - (void)rs_setFloat:(CGFloat)floatValue forFloat:(CGFloat)key {
     [self rs_setObject:@(floatValue) forKey:@(key)];
+}
+
+- (void)rs_setFloat:(CGFloat)floatValue forKey:(id<NSCopying>)key {
+    [self rs_setObject:@(floatValue) forKey:key];
 }
 
 - (void)rs_setObject:(id)anObj forFloat:(CGFloat)key {
@@ -37,7 +45,9 @@
 - (void)rs_setObject:(id)anObj forKey:(id<NSCopying>)key {
     if(key) {
         if(anObj) {
-            [self setObject:anObj forKey:key];
+            @synchronized(self) {
+                [self setObject:anObj forKey:key];
+            }
         }else{
             RunsLog(@"字典插入对象为空 key = %@",key);
         }
@@ -63,4 +73,8 @@
     [self removeObjectForKey:@(floatValue)];
 }
 
+
+- (BOOL)isEmpty {
+    return self.count <= 0;
+}
 @end

@@ -32,5 +32,5 @@
 @end
 
 @interface UIViewController (BackButtonHandler) <BackButtonHandlerProtocol>
-
+- (void)rs_replacePopAction:(SEL _Nullable)sel;
 @end

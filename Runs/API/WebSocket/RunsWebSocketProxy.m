@@ -29,8 +29,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        delegates = [NSMutableArray array];
-        _reconnectMaxCount = WEBSOCKET_RECONNECT_COUNT;
+        delegates = [[NSMutableArray alloc] init];
+        _reconnectMaxCount = WEB_SOCKET_RECONNECT_COUNT;
     }
     return self;
 }
@@ -66,31 +66,60 @@
 
 #pragma mark -- RunsWebSocketProtocol 
 - (void)connectWithURL:(NSURL *)URL {
-    if (self.isConnect) return;
-    
+    if (_isConnect) {
+        RunsLogEX(@"已经连接成功 取消继续重连")
+        return;
+    }
+    //
     _host = URL;
     //
     [self close];
-    self.socket = [[SRWebSocket alloc] initWithURL:URL];
-    self.socket.delegate = self;
-    [self.socket open];
+    if (!_host) {
+        RunsLogEX(@"连接WebSocket失败， Host 为空")
+        return;
+    }
+    _socket = [[SRWebSocket alloc] initWithURL:URL];
+    _socket.delegate = self;
+    [_socket open];
+    //
+    RunsLogEX(@"socket 正在连接 host : %@",_host.absoluteString)
 }
 
 - (void)reconnect {
+    if (_isReconnect) {
+        RunsLogEX(@"已经在重连中 ...")
+        return;
+    }
+    RunsLogEX(@"socket 将要进行重连 ...")
     _isReconnect = YES;
     [self connectWithURL:_host];
 }
 
 - (void)close {
-    if (!self.isConnect) return;
-    [self.socket close];
+    RunsLogEX(@"开始关闭 socket")
+    if (!_isConnect) {
+        RunsLogEX(@"关闭失败 已经关闭哦")
+         return;
+    }
+    [_socket close];
     [self clean];
+    RunsLogEX(@"关闭socket 成功")
 }
 
 - (void)closeWithManually:(BOOL)isManually {
-    if (!self.isConnect) return;
+    RunsLogEX(@"手动关闭socket : %@", isManually ? @"YES" : @"NO")
+    if (!_isConnect){
+        RunsLogEX(@"手动关闭socket失败，已经关闭哦")
+        return;
+    }
     _isManuallyDisconnect = isManually;
     [self close];
+}
+
+- (void)forcedReconnect {
+    _isReconnect = NO;
+    [self closeWithManually:NO];
+    [self reconnect];
 }
 
 - (void)clean {
@@ -98,11 +127,11 @@
 }
 
 - (void)setReconnectMaxCount:(NSUInteger)reconnectMaxCount {
-    _reconnectMaxCount = reconnectMaxCount > 0 ? reconnectMaxCount : WEBSOCKET_RECONNECT_COUNT;
+    _reconnectMaxCount = reconnectMaxCount > 0 ? reconnectMaxCount : WEB_SOCKET_RECONNECT_COUNT;
 }
 
 - (void)sendMap:(NSDictionary *)parameters {
-    if (!self.isConnect) return;
+    if (!_isConnect) return;
     if (_socket.readyState != SR_OPEN) {
         if (_socket.readyState == SR_CLOSING || _socket.readyState == SR_CLOSED) return;
         __weak typeof(self) weak_self = self;
@@ -115,7 +144,7 @@
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [self.socket send:jsonString];
+    [_socket send:jsonString];
     RunsLogEX(@"\n%@",parameters)
 }
 
@@ -130,28 +159,50 @@
         });
         return;
     }
-
-    
-    [self.socket send:message];
-    RunsLogEX(@"\n%@",[GKSimpleAPI jsonConvertObject:message])
+    //
+    [_socket send:message];
+#ifdef DEBUG
+    NSDictionary *jsonMap = [GKSimpleAPI jsonConvertObject:message];
+    if (LOG_HEART_BEAT) {
+        RunsLogEX(@"\n%@",jsonMap ? jsonMap : message)
+    }else {
+        if ([jsonMap[@"type"] integerValue] != ServerHeartBeatMessage) {
+            RunsLogEX(@"\n%@",jsonMap ? jsonMap : message)
+        }
+    }
+#endif
 }
 
 - (void)registeredListenWithType:(NSInteger)type callback:(SocketCallback)callback {
-    if (!self.callbackMap) {
-        self.callbackMap = [NSMapTable weakToWeakObjectsMapTable];
+    if (!_callbackMap) {
+        _callbackMap = [NSMapTable weakToWeakObjectsMapTable];
     }
-    SafeSetObject(self.callbackMap, callback, @(type))
+    id key = @(type);
+    id obj = callback;
+    id map  = _callbackMap;
+    if(_callbackMap){
+        if(key) {
+            if(obj) {
+                [map setObject:obj forKey:key];
+            }else{
+                RunsLog(@"字典插入对象为空 key = %@",key);
+            }
+        }else{
+            RunsLog(@"字典插入key为空");
+        }
+    } else {
+        RunsLog(@"字典为空 无法插入数据");
+    }
 }
 
 - (void)removeListenWithType:(NSInteger)type {
-    [self.callbackMap removeObjectForKey:@(type)];
+    [_callbackMap removeObjectForKey:@(type)];
 }
 
 #pragma mark -- SRWebSocketDelegate 
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    RunsLogEX(@"webSocketDidOpen");
-    
+    RunsLogEX(@"socket WebSocket连接成功");
     _reconnectCount = 0;
     _isConnect = YES;
     _isManuallyDisconnect = NO;
@@ -160,7 +211,7 @@
         _isReconnect = NO;
         [self showReconnectSuccessTips];
     }
-    
+    RunsLogEX(@"socket 代理数 ： %lu",(unsigned long)delegates.count)
     [delegates enumerateObjectsUsingBlock:^(id<RunsWebSocketDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj respondsToSelector:@selector(socket:didOpenWithHost:)]) {
             [obj socket:self didOpenWithHost:_host];
@@ -170,16 +221,27 @@
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
     NSDictionary *jsonMap = [GKSimpleAPI dataConversionAdaption:message];
-    RunsLogEX(@"\n%@",jsonMap ? jsonMap : message)
     
+#ifdef DEBUG
+    if (LOG_HEART_BEAT) {
+        RunsLogEX(@"\n%@",jsonMap ? jsonMap : message)
+    }else {
+        if ([jsonMap[@"type"] integerValue] != ServerHeartBeatMessage) {
+            RunsLogEX(@"\n%@",jsonMap ? jsonMap : message)
+        }else {
+            RunsLogEX(@"蹦蹦蹦")
+        }
+    }
+#endif
+
     [delegates enumerateObjectsUsingBlock:^(id<RunsWebSocketDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj respondsToSelector:@selector(socket:didReceiveMessage:)]) {
             *stop = [obj socket:self didReceiveMessage:jsonMap];
         }
     }];
     
-    RunsWebSocketRespone *respone = [RunsWebSocketRespone mj_objectWithKeyValues:jsonMap];
-    SocketCallback callback = [self.callbackMap objectForKey:respone.type];
+    RunsWebSocketResponse *respone = [RunsWebSocketResponse mj_objectWithKeyValues:jsonMap];
+    SocketCallback callback = [_callbackMap objectForKey:respone.type];
     if (callback) {
         callback(jsonMap);
         return;
@@ -198,8 +260,8 @@
             [delegates removeObject:obj];
         }
     }];
-    
-    RunsLogEX(@"didFailWithError error : %@",error);
+    RunsLogEX(@"didFailWithError error : %@",error.localizedDescription);
+    _isConnect = NO;
     [self delayReconect];
 }
 
@@ -216,6 +278,7 @@
     }];
 
     RunsLogEX(@"didCloseWithCode code = %ld, reason = %@, clean = %d",(long)code, reason, wasClean);
+    _isConnect = NO;
     [self delayReconect];
 }
 
@@ -230,16 +293,15 @@
     });
 }
 
-
 - (void)checkReconnect {
     if (_isConnect) return;
     if (_isManuallyDisconnect) return;
+    if (![RunsNetworkMonitor NetworkIsReachableWithShowTips:NO]) return;
     if (_reconnectCount < _reconnectMaxCount) {
-        [self reconnect];
         _reconnectCount += 1;
+        RunsLogEX(@"正在进行第%lu次重连socket",(unsigned long)_reconnectCount)
+        [self reconnect];
         [self showReconnectTips];
-        RunsLogEX(@"正在进行第%lu次重连socket",(unsigned long)self.reconnectCount)
-        
         return;
     }
     _socket.delegate = nil;
@@ -249,8 +311,9 @@
 static int ToastShowCount = 0;
 - (void)showReconnectTips {
     __weak typeof(self) weak_self = self;
-    NSString *message = [NSString stringWithFormat:@"连接不稳定，第%lu次自动重连中…",_reconnectCount];
-    [UIApplication.sharedApplication.keyWindow makeToast:message duration:2.f position:CSToastPositionCenter completed:^(BOOL didTap) {
+//    NSString *message = [NSString stringWithFormat:@"连接不稳定，第%lu次自动重连中…",(unsigned long)_reconnectCount];
+    NSString *message = @"    正在刷新...    ";
+    [UIApplication.sharedApplication.keyWindow makeToast:message duration:1.f position:CSToastPositionCenter completed:^(BOOL didTap) {
         ToastShowCount += 1;
         if (ToastShowCount < weak_self.reconnectMaxCount)  return;
         if (weak_self.reconnectCount >= weak_self.reconnectMaxCount) {
@@ -272,8 +335,9 @@ static int ToastShowCount = 0;
 }
 
 - (void)showReconnectSuccessTips {
+//    [UIApplication.sharedApplication.keyWindow makeToast:@"重新连接成功" duration:3.f position:CSToastPositionCenter];
     [CSToastManager setQueueEnabled:YES];
-    [UIApplication.sharedApplication.keyWindow makeToast:@"重新连接成功" duration:1.f position:CSToastPositionCenter];
+    [UIApplication.sharedApplication.keyWindow makeToast:@"    刷新成功    " duration:1.f position:CSToastPositionCenter];
 }
 
 @end

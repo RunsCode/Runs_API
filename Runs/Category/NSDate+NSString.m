@@ -10,6 +10,12 @@
 
 @implementation NSDate (NSString)
 
+- (BOOL)isToday {
+    NSString *today = [self.class timeWithFormat:@"yyyy-MM-dd" timeValue1970:NSDate.date.timeIntervalSince1970];
+    NSString *selfDay = [self.class timeWithFormat:@"yyyy-MM-dd" timeValue1970:self.timeIntervalSince1970];
+    return [today isEqualToString:selfDay];
+}
+
 - (NSTimeInterval)secondSystemTime {
     return time(NULL);
 }

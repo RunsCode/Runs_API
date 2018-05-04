@@ -1,12 +1,12 @@
 //
-//  RunsHttpSessionRespone.m
+//  RunsHttpSessionResponse.m
 //  OU_iPad
 //
 //  Created by runs on 2017/8/1.
 //  Copyright © 2017年 Olacio. All rights reserved.
 //
 
-#import "RunsHttpSessionRespone.h"
+#import "RunsHttpSessionResponse.h"
 
 #define CODE_KEY        @"code"
 #define RESULT_CODE_KEY @"resultCode"
@@ -15,12 +15,20 @@
 #define SUCCESS_KEY     @"success"
 #define ERR_MSG_KEY     @"message"
 
-@implementation RunsHttpSessionRespone
+@implementation RunsHttpSessionResponse
 
-- (instancetype)initWithResponeData:(id)respone {
+- (instancetype)initWithResponseData:(id)respone {
     self = [super init];
     if (self) {
-        NSDictionary *json = [GKSimpleAPI dataConversionAdaption:respone];
+        id object = [GKSimpleAPI dataConversionAdaption:respone];
+        if ([object isKindOfClass:NSArray.class]) {
+            NSArray *array = (NSArray *)object;
+            _success = array.count > 0;
+            _data = array;
+            return self;
+        }
+        
+        NSDictionary *json = (NSDictionary *)object;
         _origin = json;
         //
         if (json[CODE_KEY]) {
@@ -54,13 +62,12 @@
         if (_returnCode.length > 0) {
             _success = [_returnCode isEqualToString:@"SUCCESS"];
         }
-
     }
     return self;
 }
 
 - (NSError *)error {
-    if (!self.errorMessage) self.errorMessage = @"未知错误";
+    if (!self.errorMessage) self.errorMessage = @"网络异常";
     return [NSError errorWithDomain:self.errorMessage code:self.code userInfo:nil];
 }
 

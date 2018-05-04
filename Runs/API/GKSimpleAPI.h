@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  获取UUID 每次都不同
 
- @return
+ @return UUID
  */
 + (NSString* _Nonnull)UUID;
 
@@ -54,6 +54,24 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回加密后字符串
  */
 + (nullable NSString *)md5:(nonnull NSString *)input;
+
+/**
+ 计算文件的md5值
+
+ @param path 文件路径
+ @return 返回加密后字符串
+ */
+- (nullable NSString*)md5WithFilePath:(NSString*)path;
+
+/**
+ 比对文件MD5值 查看是否完整或者被修改过
+
+ @param md5Value 原始MD5值
+ @param filePath 文件路径
+ @return 返回结果 YES:表示完全符合或者违背修改过 NO:表示文件前后不一致
+ */
+- (BOOL)isLegalFileWithMd5:(NSString *)md5Value path:(NSString *)filePath;
+
 /**
  *  给不同文字上色
  *
@@ -91,7 +109,13 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return YES OR NO
  */
 + (BOOL)checkMobileNumber:(nonnull NSString *)mobile;
+/**
+ 检查ipv4 合法性
 
+ @param ipv4 IP地址
+ @return YES OR NO
+ */
++ (BOOL)checkIPv4Address:(nonnull NSString *)ipv4;
 /**
  验证码正则表达式检测
 
@@ -196,17 +220,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return 距离
  */
 + (CGFloat)calculateTheVerticalDistanceFromPointToLineStart:(CGPoint)start endPoint:(CGPoint)end point:(CGPoint)point;
-
-/**
- 道格拉斯-普克算法(D-P)  根据最大距离限制，采用DP方法递归的对原始轨迹进行采样，得到压缩后的轨迹
-
- @param points 原始坐标组
- @param destArray 目标数组
- @param start 起始下标
- @param end 终点下标
- @param threshold 点到直线最大距离阈值
- */
-+ (void)douglasPeukcerCompress:(NSArray<OUPoint *>*)points destPoints:(NSMutableArray<OUPoint *> *)destArray startIndex:(int)start endIndex:(int)end maxDistance:(CGFloat)threshold;
 
 /**
  道格拉斯-普克算法(D-P)  根据最大距离限制，采用DP方法递归的对原始轨迹进行采样，得到压缩后的轨迹

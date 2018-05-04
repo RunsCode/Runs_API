@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface UIAlertController (Category)
-+ (void)rs_showNormalAlertTitle:(NSString *)title massage:(NSString *)message buttonName:(NSString *)name ;
++ (instancetype)rs_showNormalAlertTitle:(NSString *)title massage:(NSString *)message buttonName:(NSString *)name ;
 @end

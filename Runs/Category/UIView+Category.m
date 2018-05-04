@@ -86,6 +86,15 @@
     return self.frame.origin.y + self.frame.size.height;
 }
 
+- (void)corners:(UIRectCornerExtension)corners radius:(CGFloat)radius {
+    RunsAssert(self.bounds.size.width > 0 && self.bounds.size.height > 0, @"没有实际大小Size 无法切圆角")
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds byRoundingCorners:(UIRectCorner)corners cornerRadii:CGSizeMake(radius, radius)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc]init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
 //- (UIView *)deepCopy
 //{
 //    NSData *archiveForCopyView = [NSKeyedArchiver archivedDataWithRootObject:self];

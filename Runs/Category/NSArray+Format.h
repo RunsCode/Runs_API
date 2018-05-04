@@ -10,4 +10,5 @@
 
 @interface NSArray (Format)
 - (NSString *)toString;
+- (BOOL)isEmpty;
 @end

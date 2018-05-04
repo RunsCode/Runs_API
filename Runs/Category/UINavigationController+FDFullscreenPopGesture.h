@@ -22,6 +22,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// "UINavigation+FDFullscreenPopGesture" extends UINavigationController's swipe-
 /// to-pop behavior in iOS 7+ by supporting fullscreen pan gesture. Instead of
 /// screen edge, you can now swipe from any place on the screen and the onboard
@@ -39,6 +41,7 @@
 /// Default to YES, disable it if you don't want so.
 @property (nonatomic, assign) BOOL fd_viewControllerBasedNavigationBarAppearanceEnabled;
 
+- (void)fd_popTargetViewController:(Class)targetCls animated:(BOOL)animated completed:(void(^ _Nullable)(void))completed;
 @end
 
 /// Allows any view controller to disable interactive pop gesture, which might
@@ -55,3 +58,4 @@
 /// Default to NO, bars are more likely to show.
 @property (nonatomic, assign) BOOL fd_prefersNavigationBarHidden;
 @end
+NS_ASSUME_NONNULL_END

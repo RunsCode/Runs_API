@@ -7,8 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
+/**
+ * 前闭后开区间
+ */
+@interface OURange : NSObject<NSCopying, NSCoding>
+@property (nonatomic, assign) long long loc;
+@property (nonatomic, assign) long long len;
++ (instancetype)rangWithLocation:(long long)loc length:(long long)len;
+- (BOOL)containElement:(NSInteger)element;
+@end
+
 @class OUSize;
-@interface CoordinateTrandfromProtocol : NSObject
+@interface CoordinateTransformProtocol : NSObject
 @property (nonatomic, strong) OUSize *itemSize;
 
 - (instancetype)local;//WithItemSize:(OUSize *)size;
@@ -20,7 +30,7 @@
 @end
 
 
-@interface OUPoint : CoordinateTrandfromProtocol
+@interface OUPoint : CoordinateTransformProtocol
 
 @property (nonatomic, assign) CGFloat x;
 @property (nonatomic, assign) CGFloat y;
@@ -38,7 +48,7 @@
 @end
 
 
-@interface OUSize : CoordinateTrandfromProtocol
+@interface OUSize : CoordinateTransformProtocol
 
 @property (nonatomic, assign) CGFloat width;
 @property (nonatomic, assign) CGFloat height;
@@ -53,19 +63,19 @@
 + (instancetype)sizeAdapterImageSize:(CGSize)size;
 
 + (instancetype)sizeWithSize:(CGSize)size;
-+ (instancetype)sizeWithSize:(CGSize)size itemSize:(OUSize *)size;
++ (instancetype)sizeWithSize:(CGSize)size itemSize:(OUSize *)itemSize;
 
 + (instancetype)sizeWithFrame:(CGRect)frame;
-+ (instancetype)sizeWithFrame:(CGRect)frame itemSize:(OUSize *)size;
++ (instancetype)sizeWithFrame:(CGRect)frame itemSize:(OUSize *)itemSize;
 
 + (instancetype)sizeWithWidth:(CGFloat)w height:(CGFloat)h;
-+ (instancetype)sizeWithWidth:(CGFloat)w height:(CGFloat)h itemSize:(OUSize *)size;
++ (instancetype)sizeWithWidth:(CGFloat)w height:(CGFloat)h itemSize:(OUSize *)itemSize;
 
 + (instancetype)sizeWithOrigin:(CGPoint)origin end:(CGPoint)end;
-+ (instancetype)sizeWithOrigin:(CGPoint)origin end:(CGPoint)end itemSize:(OUSize *)size;
++ (instancetype)sizeWithOrigin:(CGPoint)origin end:(CGPoint)end itemSize:(OUSize *)itemSize;
 
 + (instancetype)sizeWithFirst:(OUPoint *)first last:(OUPoint *)last;
-+ (instancetype)sizeWithFirst:(OUPoint *)first last:(OUPoint *)last itemSize:(OUSize *)size;
++ (instancetype)sizeWithFirst:(OUPoint *)first last:(OUPoint *)last itemSize:(OUSize *)itemSize;
 
 + (instancetype)rateSize;
 + (NSString *)widthKey;

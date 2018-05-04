@@ -72,15 +72,15 @@
 }
 
 + (void)rs_unsubscribe:(id)observer {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:observer];
 }
 
 + (void)rs_unsubscribe:(id)observer notificationName:(NSString *)notificatioName {
-    [NSNotificationCenter.defaultCenter removeObserver:self name:notificatioName object:nil];
+    [NSNotificationCenter.defaultCenter removeObserver:observer name:notificatioName object:nil];
 }
 
 + (void)rs_unsubscribe:(id)observer notificationName:(NSString *)notificatioName object:(id)obj {
-    [NSNotificationCenter.defaultCenter removeObserver:self name:notificatioName object:obj];
+    [NSNotificationCenter.defaultCenter removeObserver:observer name:notificatioName object:obj];
 }
 
 @end
@@ -92,7 +92,7 @@
     id classObj = objc_getClass(NSStringFromClass(self.class).UTF8String);
     objc_property_t *pList = class_copyPropertyList(classObj, &count);
     free(pList);
-    return count >= 4 ? count -4 : count > 0 ? count : 0;
+    return count;// >= 4 ? count -4 : count > 0 ? count : 0;
 }
 
 
@@ -190,7 +190,7 @@
         orderCommand = @"DESC";
     }
 
-    return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ < :%@ ORDER BY %@ %@ LIMIT %ld",tableName, conditionKey, conditionKey, orderKey, orderCommand, limit];
+    return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ < :%@ ORDER BY %@ %@ LIMIT %ld",tableName, conditionKey, conditionKey, orderKey, orderCommand, (unsigned long)limit];
 }
 
 + (NSString *)rs_fetchQuerySqlWithTableName:(NSString *)tableName conditionKey:(NSString *)conditionKey order:(QueryOrderType)order orderKey:(NSString *)orderKey limit:(NSUInteger)limit {
@@ -208,7 +208,7 @@
         orderCommand = @"DESC";
     }
     
-    return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ = :%@ ORDER BY %@ %@ LIMIT %ld;",tableName, conditionKey, conditionKey, orderKey, orderCommand, limit];
+    return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ = :%@ ORDER BY %@ %@ LIMIT %ld;",tableName, conditionKey, conditionKey, orderKey, orderCommand, (unsigned long)limit];
 
 }
 
@@ -226,7 +226,7 @@
         return [NSString stringWithFormat:@"SELECT * FROM %@  ORDER BY %@ %@;",tableName, orderKey, orderCommand];
     }
 
-    return [NSString stringWithFormat:@"SELECT * FROM %@  ORDER BY %@ %@ LIMIT %ld;",tableName, orderKey, orderCommand, limit];
+    return [NSString stringWithFormat:@"SELECT * FROM %@  ORDER BY %@ %@ LIMIT %ld;",tableName, orderKey, orderCommand, (unsigned long)limit];
 }
 @end
 

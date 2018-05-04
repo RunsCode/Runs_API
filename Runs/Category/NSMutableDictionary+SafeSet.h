@@ -11,9 +11,11 @@
 @interface NSMutableDictionary (SafeSet)
 - (void)rs_setInt:(NSInteger)intValue forInt:(NSInteger)key;
 - (void)rs_setInt:(NSInteger)intValue forFloat:(CGFloat)key;
+- (void)rs_setInt:(NSInteger)intValue forKey:(id<NSCopying>)key;
 //
 - (void)rs_setFloat:(CGFloat)floatValue forInt:(NSInteger)key;
 - (void)rs_setFloat:(CGFloat)floatValue forFloat:(CGFloat)key;
+- (void)rs_setFloat:(CGFloat)floatValue forKey:(id<NSCopying>)key;
 //
 - (void)rs_setObject:(id)anObj forInt:(NSInteger)key;
 - (void)rs_setObject:(id)anObj forFloat:(CGFloat)key;
@@ -24,5 +26,7 @@
 //
 - (void)rs_removeObjectForInt:(NSInteger)intValue;
 - (void)rs_removeObjectForFloat:(CGFloat)floatValue;
+
+- (BOOL)isEmpty;
 
 @end

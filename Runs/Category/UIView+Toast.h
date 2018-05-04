@@ -38,6 +38,7 @@ static const NSString * CSToastAnimationActivityViewKey                 = @"CSTo
 static const NSString * CSToastAnimationActivityTextViewKey             = @"CSToastAnimationActivityTextViewKey";
 static const NSString * CSToastAnimationActivityContentViewKey          = @"CSToastAnimationActivityContentViewKey";
 static const NSString * CSToastQueueKey                                 = @"CSToastQueueKey";
+static const NSString * CSToastActiveKey                                = @"CSToastActiveKey";
 
 @class CSToastStyle;
 
@@ -134,6 +135,27 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
                           title:(NSString *)title
                           image:(UIImage *)image
                           style:(CSToastStyle *)style;
+
+/**
+ Dismisses all active toast views. Any toast that is currently being displayed on the
+ screen is considered active.
+ 
+ @warning this does not clear toast views that are currently waiting in the queue. The next queued 
+ toast will appear immediately after `hideToasts` completes the dismissal animation.
+ 
+ */
+- (void)hideToasts;
+
+/**
+ Dismisses an active toast view.
+ 
+ @param toast The active toast view to dismiss. Any toast that is currently being displayed
+ on the screen is considered active. 
+ 
+ @warning this does not clear a toast view that is currently waiting in the queue.
+ 
+ */
+- (void)hideToast:(UIView *)toast;
 
 /**
  Creates and displays a new toast activity indicator view at a specified position.
@@ -258,7 +280,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
  */
 @property (assign, nonatomic) NSTextAlignment titleAlignment;
 
-/**  
+/**
  The message text alignment. Default is `NSTextAlignmentLeft`.
  */
 @property (assign, nonatomic) NSTextAlignment messageAlignment;
@@ -309,6 +331,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
  Default is `CGSizeMake(100.0, 100.0)`.
  */
 @property (assign, nonatomic) CGSize activitySize;
+@property (strong, nonatomic) UIColor *activityColor;
 
 /**
  The fade in/out animation duration. Default is 0.2.
@@ -340,6 +363,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
  with with a nil style. By default, this is set to `CSToastStyle`'s default
  style.
  
+ @param sharedStyle the shared style
  */
 + (void)setSharedStyle:(CSToastStyle *)sharedStyle;
 
@@ -354,6 +378,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
 /**
  Enables or disables tap to dismiss on toast views. Default is `YES`.
  
+ @param tapToDismissEnabled YES or NO
  */
 + (void)setTapToDismissEnabled:(BOOL)tapToDismissEnabled;
 
@@ -361,7 +386,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
  Returns `YES` if tap to dismiss is enabled, otherwise `NO`.
  Default is `YES`.
  
- @return BOOL
+ @return BOOL YES or NO
  */
 + (BOOL)isTapToDismissEnabled;
 
@@ -372,6 +397,7 @@ static const NSString * CSToastQueueKey                                 = @"CSTo
  on their positions). This has no effect on the toast activity view,
  which operates independently of normal toast views. Default is `YES`.
  
+ @param queueEnabled YES or NO
  */
 + (void)setQueueEnabled:(BOOL)queueEnabled;
 

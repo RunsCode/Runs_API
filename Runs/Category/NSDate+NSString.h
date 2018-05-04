@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDate (NSString)
 
+- (BOOL)isToday;
+
 /**
  获取系统当前时间戳
 
