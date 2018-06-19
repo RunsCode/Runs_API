@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return 返回图片
  */
-+ (nonnull UIImage *)fetchCacheImageWithUrl:(nonnull NSURL *)url placeholderImage:(nullable NSString *)placeHolderImageName;
+//+ (nonnull UIImage *)fetchCacheImageWithUrl:(nonnull NSURL *)url placeholderImage:(nullable NSString *)placeHolderImageName;
 /**
  *  获取视频第一帧图片
  *

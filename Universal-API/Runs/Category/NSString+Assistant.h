@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "RunsHttpAssistant.h"
 
 @interface NSString (Assistant)
 @property (nonatomic, strong) RunsHttpAssistant *httpAssistant;

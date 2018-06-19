@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface NSMutableDictionary (SafeSet)
 - (BOOL)rs_setInt:(NSInteger)intValue forInt:(NSInteger)key;

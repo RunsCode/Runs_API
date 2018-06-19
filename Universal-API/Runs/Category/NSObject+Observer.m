@@ -7,6 +7,8 @@
 //
 
 #import "NSObject+Observer.h"
+#import <objc/runtime.h>
+#import "RunsMacroConstant.h"
 
 @implementation NSObject (Observer)
 

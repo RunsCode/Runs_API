@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+Observation.h"
+#import <objc/runtime.h>
 
 @implementation NSObject (Observation)
 
@@ -41,7 +42,7 @@
     if (keyPath.length <= 0) return;
     if (![listener conformsToProtocol:@protocol(IKeyPathListenerProtocol)]) return;
 
-    NSMutableDictionary<NSString *, NSHashTable *> *map = self.listenKeyPathMap;
+    NSMutableDictionary<NSString *, NSHashTable *> *map = (NSMutableDictionary<NSString *, NSHashTable *> *)self.listenKeyPathMap;
     if (!map[keyPath]) {
         map[keyPath] = [NSHashTable weakObjectsHashTable];
     }

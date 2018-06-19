@@ -7,6 +7,8 @@
 //
 
 #import "RunsObjectSingleton.h"
+#import <objc/runtime.h>
+#import "RunsMacroConstant.h"
 
 @interface Hash<ObjectType> : NSObject<NSCopying>
 @property (nonatomic, assign) NSInteger code;

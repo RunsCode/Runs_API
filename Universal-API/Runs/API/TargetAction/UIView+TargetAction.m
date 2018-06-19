@@ -8,6 +8,7 @@
 
 #import "UIView+TargetAction.h"
 #import "RunsTargetActionEngine.h"
+#import <objc/runtime.h>
 
 @implementation UIView (TargetAction)
 
@@ -28,9 +29,9 @@
 }
 
 - (void)rs_releaseTargetactionEngine {
-    id<RunsTargetActionEngineProtocol> engine = objc_getAssociatedObject(self, @selector(commandEngine));
+    id<RunsTargetActionEngineProtocol> engine = objc_getAssociatedObject(self, @selector(targetactionEngine));
     if (!engine) return;
-    objc_setAssociatedObject (self, @selector(commandEngine), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject (self, @selector(targetactionEngine), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)addTarget:(id)target action:(SEL)action forControlEvents:(RunsControlEvents)controlEvents {

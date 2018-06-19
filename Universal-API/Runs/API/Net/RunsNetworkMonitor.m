@@ -7,6 +7,10 @@
 //
 
 #import "RunsNetworkMonitor.h"
+#import <UIKit/UIKit.h>
+#import "RunsMacroConstant.h"
+#import "NSObject+RuntimeLog.h"
+
 @interface RunsNetworkMonitor()
 @end
 

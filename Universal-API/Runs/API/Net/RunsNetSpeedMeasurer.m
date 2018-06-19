@@ -19,6 +19,8 @@
 #include <net/if_dl.h>
 
 #import "RunsNetSpeedMeasurer.h"
+#import "RunsMacroConstant.h"
+
 
 @implementation RunsNetFragmentation
 + (NSString *)maxValueInputKeyPath { return @"@max.inputBytesCount"; }

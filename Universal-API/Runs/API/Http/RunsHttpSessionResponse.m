@@ -7,6 +7,7 @@
 //
 
 #import "RunsHttpSessionResponse.h"
+#import "GKSimpleAPI.h"
 
 #define CODE_KEY        @"code"
 #define RESULT_CODE_KEY @"resultCode"

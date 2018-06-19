@@ -7,6 +7,7 @@
 //
 
 #import "NSString+Assistant.h"
+#import <objc/runtime.h>
 
 static const NSString * RSRunsHttpAssistantKey = @"RSRunsHttpAssistantKey";
 

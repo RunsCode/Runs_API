@@ -7,6 +7,7 @@
 //
 
 #import "NSString+Category.h"
+#import "RunsMacroConstant.h"
 
 @implementation NSString (Category)
 - (NSString *)rs_nonNull {

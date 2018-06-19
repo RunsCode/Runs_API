@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "RunsHttpSessionProtocol.h"
+#import "RunsObjectSingleton.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 

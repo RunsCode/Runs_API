@@ -7,6 +7,7 @@
 //
 
 #import "NSURLSessionTask+Category.h"
+#import <objc/runtime.h>
 #define DEFAULT_MAX_RETRY_COUNT (3)
 
 static const NSString * RSRetryCountKey = @"RSRetryCountKey";

@@ -8,6 +8,7 @@
 
 #import "UIControl+Category.h"
 #import <objc/runtime.h>
+#import "UIView+Toast.h"
 
 @implementation UIControl (Category)
 static const char *UIControl_acceptEventInterval = "UIControl_acceptEventInterval";

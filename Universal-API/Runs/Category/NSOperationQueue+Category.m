@@ -7,6 +7,7 @@
 //
 
 #import "NSOperationQueue+Category.h"
+#import <objc/runtime.h>
 
 @implementation NSOperation (Category)
 

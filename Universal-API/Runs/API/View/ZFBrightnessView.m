@@ -30,11 +30,6 @@
 // 屏幕的高
 #define ScreenHeight                        [[UIScreen mainScreen] bounds].size.height
 // 图片路径
-#define ZFPlayerSrcName(file)               [@"ZFPlayer.bundle" stringByAppendingPathComponent:file]
-
-#define ZFPlayerFrameworkSrcName(file)      [@"Frameworks/ZFPlayer.framework/ZFPlayer.bundle" stringByAppendingPathComponent:file]
-
-#define ZFPlayerImage(file)                 [UIImage imageNamed:ZFPlayerSrcName(file)] ? :[UIImage imageNamed:ZFPlayerFrameworkSrcName(file)]
 @interface ZFBrightnessView ()
 
 @property (nonatomic, strong) UIImageView		*backImage;
@@ -70,7 +65,7 @@
         [self addSubview:toolbar];
         
         self.backImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 79, 76)];
-        self.backImage.image        = [UIImage imageNamed:@"ZFPlayer_brightness.png"];
+        self.backImage.image = [UIImage imageNamed:RUNS_ICON_NAME];
         [self addSubview:self.backImage];
 		
         self.title      = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.bounds.size.width, 30)];

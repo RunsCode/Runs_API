@@ -23,6 +23,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define RUNS_ICON_NAME @"runs_brightness.png"
+
 @interface ZFBrightnessView : UIView
 
 /** 调用单例记录播放状态是否锁定屏幕方向*/

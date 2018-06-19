@@ -7,6 +7,7 @@
 //
 
 #import "UICollectionView+Category.h"
+#import <objc/runtime.h>
 
 @implementation UICollectionView (Category)
 

@@ -7,7 +7,7 @@
 //
 
 #import "UITextField+Category.h"
-
+#import <objc/runtime.h>
 NSString * const UITextFieldEventEditingDidDeleteBackward = @"UITextFieldEventEditingDidDeleteBackward";
 
 @implementation UITextField (Category)

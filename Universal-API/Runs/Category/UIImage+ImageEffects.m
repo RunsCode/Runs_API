@@ -95,6 +95,8 @@
 
 #import "UIImage+ImageEffects.h"
 #import <float.h>
+#import "RunsMacroConstant.h"
+
 @import Accelerate;
 
 @implementation UIImage (ImageEffects)

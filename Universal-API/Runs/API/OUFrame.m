@@ -7,6 +7,23 @@
 //
 
 #import "OUFrame.h"
+#define MJCodingImplementation \
+- (id)initWithCoder:(NSCoder *)decoder \
+{ \
+if (self = [super init]) { \
+[self mj_decode:decoder]; \
+} \
+return self; \
+} \
+\
+- (void)encodeWithCoder:(NSCoder *)encoder \
+{ \
+[self mj_encode:encoder]; \
+}
+
+#define MJExtensionCodingImplementation MJCodingImplementation
+
+
 
 static CGSize const RelativeSize = (CGSize){800,600};
 

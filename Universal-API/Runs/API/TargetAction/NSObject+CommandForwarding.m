@@ -8,6 +8,7 @@
 
 #import "NSObject+CommandForwarding.h"
 #import "RunsCommandForwardingEngine.h"
+#import <objc/runtime.h>
 
 @implementation NSObject (CommandForwarding)
 

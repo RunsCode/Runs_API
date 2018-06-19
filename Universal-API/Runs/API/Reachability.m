@@ -33,6 +33,7 @@
 #import <arpa/inet.h>
 #import <ifaddrs.h>
 #import <netdb.h>
+#import <RunsMacroConstant.h>
 
 
 NSString *const kReachabilityChangedNotification = @"kReachabilityChangedNotification";

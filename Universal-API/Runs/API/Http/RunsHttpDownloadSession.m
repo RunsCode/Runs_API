@@ -4,6 +4,7 @@
 //
 
 #import "RunsHttpDownloadSession.h"
+#import <RunsMacroConstant.h>
 
 @interface RunsHttpDownloadSession ()<NSURLSessionDownloadDelegate>
 @property (nonatomic, strong) RunsDownloaderCallback downloadCallback;

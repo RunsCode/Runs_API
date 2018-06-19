@@ -7,6 +7,7 @@
 //
 
 #import "NSMutableDictionary+SafeSet.h"
+#import <RunsMacroConstant.h>
 
 @implementation NSMutableDictionary (SafeSet)
 

@@ -7,6 +7,8 @@
 //
 
 #import "RunsCommandForwardingEngine.h"
+#import "RunsMacroConstant.h"
+#import <objc/message.h>
 
 @interface CommandBundle : NSObject<NSCopying>
 @property (nonatomic, weak) id cmd;

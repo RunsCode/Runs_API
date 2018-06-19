@@ -5,7 +5,7 @@
 //
 
 #import "UIView+Category.h"
-
+#import "RunsMacroConstant.h"
 @implementation UIView (Category)
 
 + (id)loadMainNib

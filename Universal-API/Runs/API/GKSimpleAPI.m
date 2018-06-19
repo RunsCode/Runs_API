@@ -8,7 +8,7 @@
 
 #import "GKSimpleAPI.h"
 #import "Runs.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+//#import <SDWebImage/UIImageView+WebCache.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <CoreMedia/CoreMedia.h>
@@ -189,13 +189,15 @@
 
 #pragma mark -- UIImage
 
-+ (nonnull UIImage *)fetchCacheImageWithUrl:(nonnull NSURL *)url placeholderImage:(nullable NSString *)placeholderImageName {
-    NSString * key = [SDWebImageManager.sharedManager cacheKeyForURL:url];
-    UIImage * cacheImage = [SDWebImageManager.sharedManager.imageCache imageFromDiskCacheForKey:key];
-    if (!cacheImage) {
-        cacheImage = [UIImage imageNamed:placeholderImageName];
-    }
-    return cacheImage;}
+//+ (nonnull UIImage *)fetchCacheImageWithUrl:(nonnull NSURL *)url placeholderImage:(nullable NSString *)placeholderImageName {
+//    NSString * key = [SDWebImageManager.sharedManager cacheKeyForURL:url];
+//    UIImage * cacheImage = [SDWebImageManager.sharedManager.imageCache imageFromDiskCacheForKey:key];
+//    if (!cacheImage) {
+//        cacheImage = [UIImage imageNamed:placeholderImageName];
+//    }
+//    return cacheImage;
+//    
+//}
 
 #pragma mark -- Video
 

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Reachability.h"
 
 FOUNDATION_EXTERN NSString * const RunsNetworkMonitorDidChangeMessage; //object NSNumber(NetworkStatus)
 

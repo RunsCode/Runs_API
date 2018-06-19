@@ -1,16 +1,21 @@
 //
-//  Runs.h
-//  Hey
+//  Universal_API.h
+//  Universal-API
 //
-//  Created by Dev_Wang on 2017/5/10.
-//  Copyright © 2017年 Giant Inc. All rights reserved.
+//  Created by runs on 2018/6/19.
+//  Copyright © 2018 Runs. All rights reserved.
 //
 
-#ifndef Runs_h
-#define Runs_h
+#import <UIKit/UIKit.h>
 
+//! Project version number for Universal_API.
+FOUNDATION_EXPORT double Universal_APIVersionNumber;
 
-#ifdef __OBJC__
+//! Project version string for Universal_API.
+FOUNDATION_EXPORT const unsigned char Universal_APIVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <Universal_API/PublicHeader.h>
+
 
 #import "Ext-Objc.h"
 #import "RunsMacroConstant.h"
@@ -91,7 +96,3 @@
 #import "UIPanGestureRecognizer+Category.h"
 //#import "UIImageView+SDWebImage.h"
 
-
-#endif
-
-#endif /* Runs_h */

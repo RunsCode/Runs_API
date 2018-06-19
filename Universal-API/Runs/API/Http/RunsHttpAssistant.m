@@ -7,6 +7,8 @@
 //
 
 #import "RunsHttpAssistant.h"
+#import "RunsMacroConstant.h"
+#import "RunsHttpSessionProxy.h"
 
 #define DEFAULT_RETRY_COUNT (3)
 

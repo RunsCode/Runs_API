@@ -7,6 +7,7 @@
 //
 
 #import "NSIndexPath+Category.h"
+#import <objc/runtime.h>
 
 static const NSString * NSIndexPathCategoryRowsCount = @"NSIndexPath+Category_runs";
 

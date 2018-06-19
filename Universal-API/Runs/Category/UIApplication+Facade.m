@@ -7,6 +7,7 @@
 //
 
 #import "UIApplication+Facade.h"
+#import <RunsMacroConstant.h>
 
 @implementation UIApplication (Facade)
 
