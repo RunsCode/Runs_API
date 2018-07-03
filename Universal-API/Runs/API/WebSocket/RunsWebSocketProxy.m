@@ -80,6 +80,7 @@
     }
     _socket = [[SRWebSocket alloc] initWithURL:URL];
     _socket.delegate = self;
+    [_socket setDelegateOperationQueue:_delegateOperationQueue ?: NSOperationQueue.mainQueue];
     [_socket open];
     //
     RunsLogEX(@"socket 正在连接 host : %@",_host.absoluteString)
@@ -340,5 +341,7 @@ static int ToastShowCount = 0;
     [CSToastManager setQueueEnabled:YES];
     [UIApplication.sharedApplication.keyWindow makeToast:@"    刷新成功    " duration:1.f position:CSToastPositionCenter];
 }
+
+@synthesize delegateOperationQueue = _delegateOperationQueue;
 
 @end

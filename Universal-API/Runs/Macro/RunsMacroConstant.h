@@ -207,4 +207,35 @@ printf("------------------------%s-----------------------\n\n", args0.UTF8String
 #define RunsRequestLog(args0,arg1)
 #endif
 
+#if defined(__cplusplus)
+#define let auto const
+#else
+#define let const __auto_type
+#endif
+
+#if defined(__cplusplus)
+#define var auto
+#else
+#define var __auto_type
+#endif
+
+#if DEBUG
+#define KEY_PATH(object, property) ((void)(NO && ((void)object.property, NO)), @ #property)
+#else
+#define KEY_PATH(object, property) (@ #property)
+#endif
+#if DEBUG
+#define PRIVATE_KEY_PATH(object, property) ((void)(NO && ((void)object->property, NO)), @#property)
+#else
+#define PRIVATE_KEY_PATH(object, property) (@ #property)
+#endif
+
+typedef struct __attribute__((objc_boxable)) CGPoint CGPoint;
+typedef struct __attribute__((objc_boxable)) CGSize CGSize;
+typedef struct __attribute__((objc_boxable)) CGRect CGRect;
+typedef struct __attribute__((objc_boxable)) CGVector CGVector;
+typedef struct __attribute__((objc_boxable)) CGAffineTransform CGAffineTransform;
+typedef struct __attribute__((objc_boxable)) UIEdgeInsets UIEdgeInsets;
+typedef struct __attribute__((objc_boxable)) _NSRange NSRange;
+
 #endif /* RunsMacroConstant_h */

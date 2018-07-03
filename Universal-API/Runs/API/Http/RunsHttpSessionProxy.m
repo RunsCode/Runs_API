@@ -16,6 +16,7 @@
 #import "GKSimpleAPI.h"
 #import "UIView+Toast.h"
 #import "NSString+NSURL_FOR_HTTP.h"
+#import "NSOperationQueue+Category.h"
 
 typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
 
@@ -81,7 +82,7 @@ typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLRespons
     
     NSMutableURLRequest *request = [self requsetWithMethod:HttpMethod_Post_Json url:url body:nil];
     [request setAllHTTPHeaderFields:@{ @"content-type": @"application/json",
-                                       @"cache-control": @"no-cache"}];
+                                       @"cache-control": @"no-cache" }];
     NSError *encodeError = nil;
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:kNilOptions error:nil];
     if (encodeError && failure) {
@@ -155,11 +156,11 @@ typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLRespons
             if (failure) {
                 BOOL can = [URLString.httpAssistant canRetryRequest];
                 if (can) return ;
-                [NSObject rs_safeMainThreadAsync:^{
+                [NSOperationQueue rs_safeMainThreadAsync:^{
                     failure(error);
                 }];
             }
-            [NSObject rs_safeMainThreadAsync:^{
+            [NSOperationQueue rs_safeMainThreadAsync:^{
                 RunsLogEX(@"下载失败 URL: %@, Error: %@", URLString, error)
                 [RunsHttpSessionProxy showToast:error.domain];
             }];
@@ -197,7 +198,7 @@ typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLRespons
     }
     NSMutableURLRequest *request = [self requsetWithMethod:HttpMethod_Head url:url body:nil];
     NSURLSessionDataTask *task = [NSURLSession.sharedSession dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        [RunsHttpSessionProxy printResponeLogWithURL:url.absoluteString data:data];
+        [RunsHttpSessionProxy printResponseLogWithURL:url.absoluteString data:data];
         NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
         [RunsHttpSessionProxy printRequestLogWithURL:url.absoluteString new:@"" message:res.allHeaderFields];
         
@@ -225,7 +226,7 @@ typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLRespons
 
 - (URLSessionCompletionHandler)handlerWithURLString:(NSString *)URLString queue:(NSOperationQueue *)operationQueue success:(SessionDataTaskSuccessCallback)success failure:(SessionDataTaskFailureCallback)failure {
     return ^(NSData *data, NSURLResponse *response, NSError *error) {
-        [RunsHttpSessionProxy printResponeLogWithURL:URLString data:data];
+        [RunsHttpSessionProxy printResponseLogWithURL:URLString data:data];
         if (!data || error) {
             BOOL can = [URLString.httpAssistant canRetryRequest];
             if (can) return ;
@@ -270,66 +271,56 @@ typedef void(^URLSessionCompletionHandler)(NSData * _Nullable data, NSURLRespons
 - (NSURL *)checkURL:(NSString *)URLString parameters:(NSDictionary *)parameters method:(HttpMethodType)method failure:(SessionDataTaskFailureCallback)failure {
     if (![RunsNetworkMonitor NetworkIsReachableWithShowTips:YES]) {
         if (failure) {
-            NSError *error = [NSError errorWithDomain:@"URL is Null" code:-1 userInfo:nil];
+            NSError *error = [NSError errorWithDomain:@"网络不可达" code:-1 userInfo:nil];
             [RunsHttpSessionProxy showToast:error.domain];
             failure(error);
         }
         return nil;
     }
     
+    NSURL *url = nil;
     if (HttpMethod_Get == method || HttpMethod_Head == method) {
-        NSURL *url = [URLString composeURLWithKeyValue:parameters];
+        url = [URLString composeURLWithKeyValue:parameters];
         [self.class printRequestLogWithURL:URLString new:url.absoluteString message:parameters];
-        //
-        if (!url) {
-            if (failure) {
-                NSError *error = [NSError errorWithDomain:@"URL is Null" code:-1 userInfo:nil];
-                [RunsHttpSessionProxy showToast:error.domain];
-                failure(error);
-            }
-        }
-        return url;
     }else if (HttpMethod_Post == method || HttpMethod_Post_Json == method || HttpMethod_Download == method) {
-        NSURL *url = [NSURL URLWithString:URLString];
+        url = [NSURL URLWithString:URLString];
         [self.class printRequestLogWithURL:URLString new:URLString message:parameters];
-        //
-        if (!url) {
-            if (failure) {
-                NSError *error = [NSError errorWithDomain:@"URL is Null" code:-1 userInfo:nil];
-                [RunsHttpSessionProxy showToast:error.domain];
-                failure(error);
-            }
-        }
-        return url;
     }
-    return nil;
+    //
+    if (url) return url;
+    if (failure) {
+        NSError *error = [NSError errorWithDomain:@"URL is Null" code:-1 userInfo:nil];
+        [RunsHttpSessionProxy showToast:error.domain];
+        failure(error);
+    }
+    return url;
 }
 
 
 + (void)printRequestLogWithURL:(NSString *_Nonnull)URLString new:(NSString *)newURLString message:(NSDictionary *_Nonnull)parameters {
 #ifdef DEBUG
     [RunsHttpSessionProxy.sharedInstance.operationQueue addOperationWithBlock:^{
-        RunsLogEX(@"\n\n------------------------%@----------------------", URLString)
+        RunsLogEX(@"\n\n------------------------%@---------------------- Request", URLString)
         printf("%s", [GKSimpleAPI objectConvertJson:parameters].UTF8String);
-        printf("\n------------------------%s-----------------------\n\n", newURLString.UTF8String);
+        printf("\n------------------------%s----------------------- Request\n\n", newURLString.UTF8String);
     }];
 #endif
 }
 
-+ (void)printResponeLogWithURL:(NSString *)URLString data:(NSData *)data {
++ (void)printResponseLogWithURL:(NSString *)URLString data:(NSData *)data {
 #ifdef DEBUG
     [RunsHttpSessionProxy.sharedInstance.operationQueue addOperationWithBlock:^{
-        RunsLogEX(@"\n\n------------------------%@----------------------", URLString)
+        RunsLogEX(@"\n\n------------------------%@---------------------- Response", URLString)
         NSDictionary *json = [GKSimpleAPI dataConversionAdaption:data];
         printf("%s", [GKSimpleAPI objectConvertJson:json].UTF8String);
-        printf("\n------------------------%s-----------------------\n\n", URLString.UTF8String);
+        printf("\n------------------------%s----------------------- Response\n\n", URLString.UTF8String);
     }];
 #endif
 }
 
 + (void)showToast:(NSString *)message {
 #ifdef DEBUG
-    [NSObject rs_safeMainThreadAsync:^{
+    [NSOperationQueue rs_safeMainThreadAsync:^{
         [UIApplication.sharedApplication.keyWindow makeToast:message duration:1.f position:CSToastPositionBottom];
     }];
 #endif

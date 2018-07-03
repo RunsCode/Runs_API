@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "RunsTargetActionEngineProtocol.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RunsTargetActionWrap : NSObject
 @property (nonatomic, weak) id target;
 @property (nonatomic, copy) NSString *action;
@@ -19,3 +21,5 @@
 @interface RunsTargetActionEngine : NSObject<RunsTargetActionEngineProtocol>
 
 @end
+
+NS_ASSUME_NONNULL_END

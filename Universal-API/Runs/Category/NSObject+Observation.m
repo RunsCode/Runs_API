@@ -12,15 +12,16 @@
 @implementation NSObject (Observation)
 
 + (void)load {
-    Method originalMethod0 = class_getInstanceMethod(self, @selector(setValue:forKeyPath:));
-    Method swizzleMethod0 = class_getInstanceMethod(self, @selector(rs_setValue:forKeyPath:));
-    method_exchangeImplementations(originalMethod0, swizzleMethod0);
-    Method originalMethod1 = class_getInstanceMethod(self, @selector(setValue:forKey:));
-    Method swizzleMethod1 = class_getInstanceMethod(self, @selector(rs_setValue:forKey:));
-    method_exchangeImplementations(originalMethod1, swizzleMethod1);
-    Method originalMethod2 = class_getInstanceMethod(self, @selector(setNilValueForKey:));
-    Method swizzleMethod2 = class_getInstanceMethod(self, @selector(rs_setNilValueForKey:));
-    method_exchangeImplementations(originalMethod2, swizzleMethod2);
+
+//    Method originalMethod0 = class_getInstanceMethod(self, @selector(setValue:forKeyPath:));
+//    Method swizzleMethod0 = class_getInstanceMethod(self, @selector(rs_setValue:forKeyPath:));
+//    method_exchangeImplementations(originalMethod0, swizzleMethod0);
+//    Method originalMethod1 = class_getInstanceMethod(self, @selector(setValue:forKey:));
+//    Method swizzleMethod1 = class_getInstanceMethod(self, @selector(rs_setValue:forKey:));
+//    method_exchangeImplementations(originalMethod1, swizzleMethod1);
+//    Method originalMethod2 = class_getInstanceMethod(self, @selector(setNilValueForKey:));
+//    Method swizzleMethod2 = class_getInstanceMethod(self, @selector(rs_setNilValueForKey:));
+//    method_exchangeImplementations(originalMethod2, swizzleMethod2);
 }
 
 - (void)rs_releaseObserverMap {
@@ -41,7 +42,6 @@
 - (void)addListener:(id<IKeyPathListenerProtocol>)listener keyPath:(NSString *)keyPath {
     if (keyPath.length <= 0) return;
     if (![listener conformsToProtocol:@protocol(IKeyPathListenerProtocol)]) return;
-
     NSMutableDictionary<NSString *, NSHashTable *> *map = (NSMutableDictionary<NSString *, NSHashTable *> *)self.listenKeyPathMap;
     if (!map[keyPath]) {
         map[keyPath] = [NSHashTable weakObjectsHashTable];

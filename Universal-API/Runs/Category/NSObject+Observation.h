@@ -15,6 +15,7 @@
 @end
 
 @protocol IObjectObservationProtocol <NSObject>
+@optional
 - (void)addListener:(id<IKeyPathListenerProtocol>)listener keyPath:(NSString *)keyPath;
 - (void)removeListener:(id<IKeyPathListenerProtocol>)listener keyPath:(NSString *)keyPath;
 - (void)removeListener:(id<IKeyPathListenerProtocol>)listener;

@@ -23,25 +23,6 @@
 }
 @end
 
-@implementation NSObject (Dispatch)
-+ (void)rs_safeMainThreadSync:(void(^)(void))block {
-    if ([NSThread isMainThread]) {
-        block();
-        return;
-    }
-    dispatch_sync(dispatch_get_main_queue(), block);
-}
-
-+ (void)rs_safeMainThreadAsync:(void(^)(void))block {
-    if ([NSThread isMainThread]) {
-        block();
-        return;
-    }
-    dispatch_async(dispatch_get_main_queue(), block);
-}
-@end
-
-
 @implementation NSObject (DeepCopy)
 
 - (instancetype)rs_deepCopy {

@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "RunsMacroConstant.h"
 #import "NSObject+RuntimeLog.h"
+#import "NSOperationQueue+Category.h"
 
 @interface RunsNetworkMonitor()
 @end
@@ -51,7 +52,7 @@ static UIAlertView *stAlert = nil;
             reachable(reachability);
         }
         
-        [NSObject rs_safeMainThreadAsync:^{
+        [NSOperationQueue rs_safeMainThreadAsync:^{
             if (stAlert) {
                 [stAlert dismissWithClickedButtonIndex:0 animated:YES];
                 stAlert = nil;
@@ -63,7 +64,7 @@ static UIAlertView *stAlert = nil;
         if (unreachable) {
             unreachable(reachability);
         }
-        [NSObject rs_safeMainThreadAsync:^{
+        [NSOperationQueue rs_safeMainThreadAsync:^{
             [self showAlert];
         }];
     };

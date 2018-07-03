@@ -5,6 +5,16 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, RunsDownloaderState) {
+    RunsDownloaderError             = 0,
+    RunsDownloaderProgress          = 1,
+    RunsDownloaderFinish            = 2,
+    RunsDownloaderInterrupt         = 3,
+    RunsDownloaderBackgroundFinish  = 4,
+    RunsDownloaderCacheResumeData   = 5,
+    RunsDownloaderStateDefault      = RunsDownloaderError,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^RunsDownloaderCallback)(NSURL *_Nullable location, NSError *_Nullable error);
@@ -13,8 +23,10 @@ typedef void (^RunsProgressCallback)(float progress);
 @interface RunsHttpDownloadSession : NSObject
 @property (nonatomic, assign, readonly) BOOL isRunning;
 @property (nonatomic, strong, readonly) NSURLSessionDownloadTask *downloadTask;
+@property (nonatomic, strong, readonly) NSURLSession *session;
 @property (nonatomic, strong) NSOperationQueue *downloaderQueue;
-
+@property (nonatomic, copy) NSString *identifier;
+- (void)cancelByProducingResumeData:(void(^)(NSString *identifier))completed;
 /**
  下载指定URL文件 返回缓存地址 以及进度
 
@@ -23,8 +35,10 @@ typedef void (^RunsProgressCallback)(float progress);
  @param progressCallback 实时进度回调
  @return task
  */
-- (NSURLSessionDownloadTask *)downloadWithURLString:(NSString *)urlString handleCallback:(RunsDownloaderCallback)completionCallback progressCallback:
-        (RunsProgressCallback)progressCallback;
+- (NSURLSessionDownloadTask *)downloadWithURLString:(NSString *)urlString handleCallback:(RunsDownloaderCallback _Nullable)completionCallback progressCallback:
+        (RunsProgressCallback _Nullable)progressCallback;
+- (NSURLSessionDownloadTask *)downloadWithResumeData:(NSData *)data handleCallback:(RunsDownloaderCallback _Nullable)completionCallback progressCallback:
+(RunsProgressCallback _Nullable)progressCallback;
 
 - (void)suspend;
 - (void)resume;

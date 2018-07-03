@@ -18,6 +18,7 @@ typedef void(^SocketCallback)(NSDictionary *messsage);
 @property (nonatomic, strong, readonly) NSURL *host;
 @property (nonatomic, assign) NSUInteger reconnectMaxCount; //default is WEBSOCKET_RECONNECT_COUN
 @property (nonatomic, weak) id<RunsWebSocketDelegate> delegate;
+@property (nonatomic, strong) NSOperationQueue *delegateOperationQueue;
 
 - (void)connectWithURL:(NSURL *)URL;
 - (void)reconnect;

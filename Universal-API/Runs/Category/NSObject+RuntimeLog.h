@@ -20,18 +20,6 @@ typedef NS_ENUM(NSUInteger, QueryOrderType) {
 - (void)rs_log;
 @end
 
-@interface NSObject (Dispatch)
-/**
- 同步 抛回主线程执行block
- */
-+ (void)rs_safeMainThreadSync:(void(^)(void))block;
-/**
- 异步 抛回主线程执行block
- */
-+ (void)rs_safeMainThreadAsync:(void(^)(void))block;
-@end
-
-
 @interface NSObject (DeepCopy)
 - (instancetype)rs_deepCopy;
 @end

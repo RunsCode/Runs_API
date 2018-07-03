@@ -74,4 +74,19 @@
     };
 }
 
++ (void)rs_safeMainThreadAsync:(dispatch_block_t)block {
+    if ([NSThread isMainThread]) {
+        block();
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
++ (void)rs_safeMainThreadSync:(dispatch_block_t)block {
+    if ([NSThread isMainThread]) {
+        block();
+        return;
+    }
+    dispatch_sync(dispatch_get_main_queue(), block);
+}
 @end
