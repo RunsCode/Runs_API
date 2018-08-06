@@ -133,6 +133,8 @@
 		AE017A0C20D8F9CC00AAF9AB /* UIView+TargetAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AE017A0A20D8F9CC00AAF9AB /* UIView+TargetAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AE017A0D20D8F9CC00AAF9AB /* UIView+TargetAction.m in Sources */ = {isa = PBXBuildFile; fileRef = AE017A0B20D8F9CC00AAF9AB /* UIView+TargetAction.m */; };
 		AE017A4520D90BF100AAF9AB /* runs_brightness.png in Resources */ = {isa = PBXBuildFile; fileRef = AE017A4420D90BF100AAF9AB /* runs_brightness.png */; };
+		AE3D875C21182E81009611C5 /* RunsHollowView.h in Headers */ = {isa = PBXBuildFile; fileRef = AE3D875A21182E80009611C5 /* RunsHollowView.h */; };
+		AE3D875D21182E81009611C5 /* RunsHollowView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE3D875B21182E80009611C5 /* RunsHollowView.m */; };
 		AEC84EAF20EB61C30093335A /* NSURLSession+ResumeData.m in Sources */ = {isa = PBXBuildFile; fileRef = AEC84EA920EB61C10093335A /* NSURLSession+ResumeData.m */; };
 		AEC84EB020EB61C30093335A /* UIStoryboard+Category.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC84EAA20EB61C20093335A /* UIStoryboard+Category.h */; };
 		AEC84EB120EB61C30093335A /* NSError+Chain.m in Sources */ = {isa = PBXBuildFile; fileRef = AEC84EAB20EB61C20093335A /* NSError+Chain.m */; };
@@ -270,6 +272,8 @@
 		AE017A0A20D8F9CC00AAF9AB /* UIView+TargetAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+TargetAction.h"; sourceTree = "<group>"; };
 		AE017A0B20D8F9CC00AAF9AB /* UIView+TargetAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+TargetAction.m"; sourceTree = "<group>"; };
 		AE017A4420D90BF100AAF9AB /* runs_brightness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = runs_brightness.png; sourceTree = "<group>"; };
+		AE3D875A21182E80009611C5 /* RunsHollowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunsHollowView.h; sourceTree = "<group>"; };
+		AE3D875B21182E80009611C5 /* RunsHollowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RunsHollowView.m; sourceTree = "<group>"; };
 		AEC84EA920EB61C10093335A /* NSURLSession+ResumeData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+ResumeData.m"; sourceTree = "<group>"; };
 		AEC84EAA20EB61C20093335A /* UIStoryboard+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIStoryboard+Category.h"; sourceTree = "<group>"; };
 		AEC84EAB20EB61C20093335A /* NSError+Chain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Chain.m"; sourceTree = "<group>"; };
@@ -472,6 +476,8 @@
 		AE01795820D8DDF000AAF9AB /* View */ = {
 			isa = PBXGroup;
 			children = (
+				AE3D875A21182E80009611C5 /* RunsHollowView.h */,
+				AE3D875B21182E80009611C5 /* RunsHollowView.m */,
 				AE01795C20D8DDF000AAF9AB /* ZFBrightnessView.h */,
 				AE01795A20D8DDF000AAF9AB /* ZFBrightnessView.m */,
 				AE017A4420D90BF100AAF9AB /* runs_brightness.png */,
@@ -600,6 +606,7 @@
 				AE0179C520D8DDF000AAF9AB /* RunsNetworkMonitor.h in Headers */,
 				AE0179DE20D8DDF000AAF9AB /* RunsTargetActionEngineProtocol.h in Headers */,
 				AE017A0920D8F95600AAF9AB /* NSOperationQueue+Category.h in Headers */,
+				AE3D875C21182E81009611C5 /* RunsHollowView.h in Headers */,
 				AE0178EB20D8DDA600AAF9AB /* UniversalApi.h in Headers */,
 				AE0179B520D8DDF000AAF9AB /* Runs.h in Headers */,
 			);
@@ -730,6 +737,7 @@
 				AE0179D920D8DDF000AAF9AB /* ZFProgressView.m in Sources */,
 				AE0179EF20D8DDF000AAF9AB /* GKSimpleAPI.m in Sources */,
 				AE0179D520D8DDF000AAF9AB /* RunsHttpAssistant.m in Sources */,
+				AE3D875D21182E81009611C5 /* RunsHollowView.m in Sources */,
 				AE01799820D8DDF000AAF9AB /* NSString+Category.m in Sources */,
 				AE01797F20D8DDF000AAF9AB /* UIImage+Category.m in Sources */,
 				AE0179AB20D8DDF000AAF9AB /* NSURLSessionTask+Category.m in Sources */,
